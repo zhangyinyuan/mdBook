@@ -1,4 +1,15 @@
 # mdBook
+# 支持中文操作步骤
+1. `cargo install mdbook --git https://github.com/zhangyinyuan/mdBook.git --branch search-non-english --force`
+2. mdbook init mybook
+3. 修改mybook下的book.toml
+   ```
+   [book]
+   language = "zh-Hans"
+   ```
+
+ 参考 [mdBook 生成站点的中文搜索支持](https://rustcc.cn/article?id=e8c04111-e8f4-47d3-a73c-3759d0a9482c)
+   
 
 [![Build Status](https://github.com/rust-lang/mdBook/workflows/CI/badge.svg?event=push)](https://github.com/rust-lang/mdBook/actions?workflow=CI)
 [![crates.io](https://img.shields.io/crates/v/mdbook.svg)](https://crates.io/crates/mdbook)
