@@ -1,18 +1,33 @@
-name: Build and Release mdBook (Multi-Platform 中文搜索版)
+name: Build and Release mdBook (中文全文检索版)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 手动触发
+  push:
+    branches:
+      - search-non-english   # 当你更新这个分支时也会触发
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]   # 这里要哪些平台就列哪些
+        include:
+          - os: ubuntu-latest
+            artifact_name: mdbook-linux
+            artifact_path: target/release/mdbook
+          - os: windows-latest
+            artifact_name: mdbook-windows.exe
+            artifact_path: target/release/mdbook.exe
+          - os: macos-latest
+            artifact_name: mdbook-macos
+            artifact_path: target/release/mdbook
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout Chinese search fork
+        uses: actions/checkout@v4
+        with:
+          repository: zhangyinyuan/mdBook
+          ref: search-non-english
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -23,13 +38,11 @@ jobs:
       - name: Build mdBook
         run: cargo build --release
 
-      - name: Upload to Release
+      - name: Upload Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: auto-build
-          name: "Auto Build Release"
-          files: |
-            target/release/mdbook.exe
-            target/release/mdbook
+          name: "Auto Build (中文搜索版)"
+          files: ${{ matrix.artifact_path }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
