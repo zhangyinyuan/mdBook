@@ -1,4 +1,4 @@
-name: Build and Release mdBook (中文全文检索版)
+name: Build and Release mdBook (中文全文检索版, 多平台)
 
 on:
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
         run: cargo build --release
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
           path: ${{ matrix.artifact_path }}
@@ -49,19 +49,19 @@ jobs:
     needs: build
     steps:
       - name: Download Linux artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: mdbook-linux
           path: .
 
       - name: Download Windows artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: mdbook-windows.exe
           path: .
 
       - name: Download macOS artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: mdbook-macos
           path: .
