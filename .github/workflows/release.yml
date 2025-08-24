@@ -1,10 +1,10 @@
 name: Build and Release mdBook (中文全文检索版)
 
 on:
-  workflow_dispatch:  # 手动触发
+  workflow_dispatch:
   push:
     branches:
-      - search-non-english   # 当你更新这个分支时也会触发
+      - search-non-english
 
 jobs:
   build:
@@ -38,11 +38,42 @@ jobs:
       - name: Build mdBook
         run: cargo build --release
 
-      - name: Upload Release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_path }}
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: mdbook-linux
+          path: .
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: mdbook-windows.exe
+          path: .
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: mdbook-macos
+          path: .
+
+      - name: Upload to Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: auto-build
           name: "Auto Build (中文搜索版)"
-          files: ${{ matrix.artifact_path }}
+          files: |
+            mdbook-linux
+            mdbook-windows.exe
+            mdbook-macos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
