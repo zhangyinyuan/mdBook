@@ -1,0 +1,31 @@
+name: Build and Release mdBook (Windows, 中文搜索版)
+
+on:
+  workflow_dispatch:  # 手动触发
+  push:
+    tags:
+      - "v*"          # 如果打了 tag 也会触发
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build mdBook
+        run: cargo build --release
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/release/mdbook.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
